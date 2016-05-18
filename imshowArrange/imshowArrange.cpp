@@ -32,6 +32,7 @@ void imshowArrange(std::vector<cv::Mat> imgList)
     //  頑張って表示
     for (int i = num - 1; i >= 0; i--)
     {
+        cout << "i = " << i << endl;
         cv::Mat img = imgList[i];
         cv::Mat availableMapTmp = availableMap.clone();
         while (1)
@@ -43,7 +44,8 @@ void imshowArrange(std::vector<cv::Mat> imgList)
             cv::Point p(-1,-1);
             for (int j = 0; j < max_sz; j++)
             if (availableMapTmp.at<uchar>(j) == 0){ p.x = j % maxWidth; p.y = j / maxHeight; break; }
-            if (p == cv::Point(-1, -1)) break;  //全部埋まっていたら諦める            
+            if (p == cv::Point(-1, -1)) break;  //全部埋まっていたら諦める
+            cout << p << endl;
             //  そこに描画できるかをチェックする
             bool showable = true;
             if (p.y + height > maxHeight - 1 || p.x + width > maxWidth - 1)
@@ -51,7 +53,6 @@ void imshowArrange(std::vector<cv::Mat> imgList)
             for (int y = p.y; y < p.y + height; y++)
                 for (int x = p.x; x < p.x + width; x++)
                     if (availableMapTmp.at<uchar>(y, x) == 255) showable = false;   //他の描画結果に重なる
-
             //  描画できる場合
             if (showable)
             {
@@ -63,6 +64,7 @@ void imshowArrange(std::vector<cv::Mat> imgList)
                 for (int y = p.y; y < p.y + height; y++)
                 for (int x = p.x; x < p.x + width; x++)
                     availableMap.at<uchar>(y, x) = 255;
+                break;
             }
             //  描画できない場合、次の候補を探す
             else
@@ -77,7 +79,10 @@ void imshowArrange(std::vector<cv::Mat> imgList)
                     }
                 }
             }
+
         }
+        cv::imshow("map", availableMap);
+        cv::waitKey();
     }
 
     cv::waitKey();
@@ -88,7 +93,7 @@ int main(int argc, _TCHAR* argv[])
     std::vector<cv::Mat> imgList{
     cv::Mat(cv::Size(320,240),CV_8UC3,cv::Scalar(0,0,255)),
     cv::Mat(cv::Size(320, 560), CV_8UC3, cv::Scalar(0, 255, 0)),
-    cv::Mat(cv::Size(120, 720), CV_8UC3, cv::Scalar(255, 0, 0)),
+    cv::Mat(cv::Size(720, 120), CV_8UC3, cv::Scalar(255, 0, 0)),
     cv::Mat(cv::Size(320, 480), CV_8UC3, cv::Scalar(0, 255, 255)),
     cv::Mat(cv::Size(320, 240), CV_8UC3, cv::Scalar(255, 0, 255))
     };
